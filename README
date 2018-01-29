@@ -1,0 +1,22 @@
+This layer needs fossup and a working fossology instance. See: 
+
+https://gitlab.com/toganlabs/fossup
+
+For more info on fossup.
+
+How to use this layer
+---------------------
+
+This layer requires the archiver.bbclass is inherited. A general
+use model would be adding the following to local.conf
+
+CONF_VERSION = "1"
+INHERIT += "archiver"
+ARCHIVER_MODE[src] = "patched"
+ARCHIVER_MODE[diff] = "1"
+ARCHIVER_MODE[diff-exclude] ?= ".pc autom4te.cache patches"
+ARCHIVER_MODE[dumpdata] = "0"
+ARCHIVER_MODE[recipe] = "1"
+COPYLEFT_LICENSE_INCLUDE = 'GPL* LGPL* BSD* Apache* Public*'
+COPYLEFT_RECIPE_TYPES = 'target'
+
