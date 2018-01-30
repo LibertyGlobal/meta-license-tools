@@ -15,7 +15,7 @@
 
 ARCHIVER_OUTDIR = "${WORKDIR}/deploy-sources/${TARGET_SYS}/${PF}/"
 IMAGE_NAME = "${MACHINE_ARCH}-${TCLIBC}-${BUILDNAME}"
-# Write build information to target filesystem
+
 python do_fossology () {
 
     outdir = d.getVar("ARCHIVER_OUTDIR")
