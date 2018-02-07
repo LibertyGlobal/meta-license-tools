@@ -13,14 +13,26 @@
 # to your conf file
 
 
-ARCHIVER_OUTDIR = "${WORKDIR}/deploy-sources/${TARGET_SYS}/${PF}/"
-IMAGE_NAME = "${MACHINE_ARCH}-${TCLIBC}-${BUILDNAME}"
-# Write build information to target filesystem
-python do_fossology () {
+do_fossology[vardepsexclude] = "BUILDNAME WORKDIR PF MACHINE_ARCH TCLIBC ARCHIVER_OUTDIR IMAGE_NAME"
 
-    outdir = d.getVar("ARCHIVER_OUTDIR")
-    bn = d.getVar('IMAGE_NAME')
-    tarname='%s-patched.tar.gz' % d.getVar('PF')
+python do_fossology () {
+    # The target bits are broken for this branch. Exclude native and cross
+    if "-native" in d.getVar('PF', True):
+        return
+    if "-cross" in d.getVar('PF', True):
+        return
+
+    workdir=d.getVar("WORKDIR", True)
+    march=d.getVar("MACHINE_ARCH", True)
+    tclibc=d.getVar("TCLIBC", True)
+    buildname=d.getVar("BUILDNAME", True)
+    ARCHIVER_OUTDIR = "%s/deploy/sources/" % workdir
+    IMAGE_NAME = "%s-%s-%s" % (march, tclibc, buildname)
+
+
+    outdir = d.getVar("ARCHIVER_OUTDIR", True)
+    bn = d.getVar('IMAGE_NAME', True)
+    tarname='%s-patched.tar.gz' % d.getVar('PF', True)
     import subprocess
     try:
         subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
@@ -32,9 +44,5 @@ python do_fossology () {
         return ""
 }
 
-addtask do_fossology after do_deploy_archives
 
-do_populate_sysroot[sstate-interceptfuncs] += "do_fossology "
-
-EXPORT_FUNCTIONS do_fossology
-
+addtask do_fossology after do_deploy_archives before do_compile
