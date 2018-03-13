@@ -24,7 +24,7 @@ python do_fossology () {
     import subprocess
     try:
         subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
-                                % (bn, outdir, tarname, tarname),
+                                % (bn, outdir, tarname, bn),
                                 shell=True,
                                 stderr=subprocess.STDOUT)
         return ""
