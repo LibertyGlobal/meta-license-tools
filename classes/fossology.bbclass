@@ -31,12 +31,12 @@ python do_fossology () {
 
 
     outdir = d.getVar("ARCHIVER_OUTDIR", True)
-    bn = d.getVar('IMAGE_NAME', True)
     tarname='%s-patched.tar.gz' % d.getVar('PF', True)
     import subprocess
+
     try:
         subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
-                                % (bn, outdir, tarname, tarname),
+                                % (IMAGE_NAME, outdir, tarname, IMAGE_NAME),
                                 shell=True,
                                 stderr=subprocess.STDOUT)
         return ""
