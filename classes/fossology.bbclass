@@ -22,25 +22,31 @@ python do_fossology () {
     if "-cross" in d.getVar('PF', True):
         return
 
-    workdir=d.getVar("WORKDIR", True)
+#    workdir=d.getVar("WORKDIR", True)
     march=d.getVar("MACHINE_ARCH", True)
     tclibc=d.getVar("TCLIBC", True)
     buildname=d.getVar("BUILDNAME", True)
-    ARCHIVER_OUTDIR = "%s/deploy/sources/" % workdir
+    DEPLOY_DIR_SRC = "%s/%s/%s/" % (d.getVar("DEPLOY_DIR_SRC", True), d.getVar("HOST_SYS", True), d.getVar('PF', True))
     IMAGE_NAME = "%s-%s-%s" % (march, tclibc, buildname)
 
-
-    outdir = d.getVar("ARCHIVER_OUTDIR", True)
     tarname='%s-patched.tar.gz' % d.getVar('PF', True)
+
+    if d.getVar('VM_SPRINT_NUMBER', True):
+       sprintnumber = "SR%s" % d.getVar('VM_SPRINT_NUMBER', True).lstrip("0")
+    else:
+       sprintnumber = tarname
+
     import subprocess
 
     try:
         subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
-                                % (IMAGE_NAME, outdir, tarname, IMAGE_NAME),
+                                % (sprintnumber, DEPLOY_DIR_SRC, tarname, sprintnumber),
                                 shell=True,
                                 stderr=subprocess.STDOUT)
         return ""
     except subprocess.CalledProcessError as ex:
+        bb.warn("""Was not able to run fossup -n %s -f %s %s -d %s"""
+                   % (IMAGE_NAME, DEPLOY_DIR_SRC, tarname, sprintnumber))
         return ""
 }
 
