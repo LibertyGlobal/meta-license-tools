@@ -26,7 +26,8 @@ python do_fossology () {
     bn = d.getVar('IMAGE_NAME')
     ARCHIVER_OUTDIR = "${WORKDIR}/deploy-sources/${TARGET_SYS}/${PF}/"
     outdir = d.getVar("ARCHIVER_OUTDIR")
-    tarname='%s-patched.tar.gz' % d.getVar('PF')
+    tarname= '%s-patched.tar.gz' % d.getVar('PF')
+    machine = d.getVar('MACHINE_ARCH')
 
     # import fossdriver objects                                                 
     from fossdriver.config import FossConfig                                    
@@ -49,9 +50,9 @@ python do_fossology () {
     server.Login() 
 
     if d.getVar('VM_SPRINT_NUMBER', True):
-       sprintnumber = "SR%s" % d.getVar('VM_SPRINT_NUMBER', True).lstrip("0")
+       sprintnumber = "SR%s-" + machine % d.getVar('VM_SPRINT_NUMBER', True).lstrip("0")
     else:
-       sprintnumber = bn
+       sprintnumber = bn + "-"+ machine
     #Create Folder: need existing parent directory, using Fossology default      
     try:
         CreateFolder(server, bn, "Software Repository").run()
