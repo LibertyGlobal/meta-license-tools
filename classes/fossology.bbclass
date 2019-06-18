@@ -54,17 +54,14 @@ python do_fossology () {
     else:
        sprintnumber = bn + "-"+ machine
     #Create Folder: need existing parent directory, using Fossology default      
-    try:
-        CreateFolder(server, bn, "Software Repository").run()
-    except:
-        return 0 
+    
+    CreateFolder(server, sprintnumber, "Software Repository").run()
             
     # Upload 
     try:                                                                    
         Upload(server, outdir+tarname, sprintnumber).run()                            
     except:
-        bb.warn("Unable to upload file to server")
-        return 0                                                                             
+        bb.warn("Unable to upload file to server")                                                                    
     # scanners
     try:                                                                   
         Scanners(server, outdir+tarname, sprintnumber).run()
