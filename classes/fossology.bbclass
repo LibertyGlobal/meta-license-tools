@@ -28,6 +28,7 @@ python do_fossology () {
     buildname=d.getVar("BUILDNAME", True)
     DEPLOY_DIR_SRC = "%s/%s/%s/" % (d.getVar("DEPLOY_DIR_SRC", True), d.getVar("HOST_SYS", True), d.getVar('PF', True))
     IMAGE_NAME = "%s-%s-%s" % (march, tclibc, buildname)
+    platform="%s" % d.getVar("MACHINE", True).split("-")[0]
 
     tarname='%s-patched.tar.gz' % d.getVar('PF', True)
 
@@ -36,11 +37,13 @@ python do_fossology () {
     else:
        sprintnumber = tarname
 
+   foss_upload_dirname = "${sprintnumber}-${platform}"
+
     import subprocess
 
     try:
         subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
-                                % (sprintnumber, DEPLOY_DIR_SRC, tarname, sprintnumber),
+                                % (sprintnumber, DEPLOY_DIR_SRC, tarname, foss_upload_dirname),
                                 shell=True,
                                 stderr=subprocess.STDOUT)
         return ""
