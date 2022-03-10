@@ -28,6 +28,7 @@ python do_fossology () {
     buildname=d.getVar("BUILDNAME", True)
     DEPLOY_DIR_SRC = "%s/%s/%s/" % (d.getVar("DEPLOY_DIR_SRC", True), d.getVar("HOST_SYS", True), d.getVar('PF', True))
     IMAGE_NAME = "%s-%s-%s" % (march, tclibc, buildname)
+    platform="%s" % d.getVar("MACHINE", True).split("-")[0]
 
     tarname='%s-patched.tar.gz' % d.getVar('PF', True)
 
@@ -36,17 +37,19 @@ python do_fossology () {
     else:
        sprintnumber = tarname
 
+    foss_upload_dirname = "%s-%s" %(sprintnumber, platform)
+
     import subprocess
 
     try:
-        subprocess.check_output("""fossup -n %s -f %s/%s -d %s""" 
-                                % (sprintnumber, DEPLOY_DIR_SRC, tarname, sprintnumber),
+        subprocess.check_output("""fossup -n %s -f %s%s -d %s"""
+                                % (foss_upload_dirname,DEPLOY_DIR_SRC, tarname, sprintnumber),
                                 shell=True,
                                 stderr=subprocess.STDOUT)
         return ""
     except subprocess.CalledProcessError as ex:
-        bb.warn("""Was not able to run fossup -n %s -f %s %s -d %s"""
-                   % (IMAGE_NAME, DEPLOY_DIR_SRC, tarname, sprintnumber))
+        bb.warn("""Was not able to run fossup -n %s -f %s%s -d %s"""
+                   % (foss_upload_dirname, DEPLOY_DIR_SRC, tarname, sprintnumber))
         return ""
 }
 
